@@ -12,8 +12,8 @@ from __future__ import division
 import time
 import random
 
-log_runlog = r"/home/pi/Scripts/LaserToy/run.log"
-log_diag = r"/home/pi/Scripts/LaserToy/diagnostic.log"
+log_runlog = r"/home/pi/Scripts/lasertoy/run.log"
+log_diag = r"/home/pi/Scripts/lasertoy/diagnostic.log"
 
 # Set up GPIO for laser power control
 import RPi.GPIO as GPIO
