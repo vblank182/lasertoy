@@ -124,7 +124,7 @@ def mediumSteps():
 
     setTilt(nexttilt)
 
-    time.sleep(random.randint(10, 26)/100)  # Sleep for a random time from 0.1 seconds to 0.25 seconds.
+    time.sleep(random.randint(15, 41)/100)  # Sleep for a random time from 0.15 seconds to 0.4 seconds.
 
 def shortSteps():
     pan_step = 5
@@ -149,7 +149,7 @@ def shortSteps():
 
     setTilt(nexttilt)
 
-    time.sleep(random.randint(5, 16)/100)  # Sleep for a random time from 0.05 seconds to 0.015 second.
+    time.sleep(random.randint(8, 21)/100)  # Sleep for a random time from 0.08 seconds to 0.2 seconds.
 
 def wait():
     chance = random.randint(0, 100)
@@ -158,7 +158,7 @@ def wait():
         time.sleep(2)
     elif (random.randint(0, 100) < 4):
         # There is a 4% chance we will wait for a long period.
-        time.sleep(4)
+        time.sleep(4.5)
     elif (random.randint(0, 100) < 1):
         # There is a 1% chance we will wait for a longer period.
         time.sleep(9)
@@ -219,7 +219,7 @@ def runLaserRoutine(timer_mins=45, daemon=True):
 
             # When laser is within top half of tilt range, roll to wait
             waitCooldown = 5  # seconds to wait before we can wait again
-            if (220 <= tilt_cur <= 290 and (time.time()-lastWait) > waitCooldown):
+            if (tilt_min+10 <= tilt_cur <= tilt_max-30 and (time.time()-lastWait) > waitCooldown):
                 wait()
                 lastWait = time.time()  # record the last wait so we don't wait too often
 
