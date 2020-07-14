@@ -6,14 +6,14 @@ import time
 import datetime as dt
 import lasertoy
 
-log_daemonlog = r"/home/pi/Scripts/LaserToy/daemon.log"
+log_daemonlog = r"/home/pi/Scripts/lasertoy/daemon.log"
 
 # Main loop
 while True:
 
 	# Get current time
 	curtime = dt.datetime.now(dt.timezone(-dt.timedelta(hours=4))).time()
-	
+
 	# Run for 45 minutes at 12pm, then 30 minutes at 5pm
 	if (curtime.hour == 12 and curtime.minute <= 1):
 		with open(log_daemonlog, 'a') as f: f.write('{} {}: Running laser routine at 12pm (12:00) for 45 minutes.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
@@ -35,9 +35,9 @@ while True:
 
 	# Sleep until the top of the next hour
 	curdt = dt.datetime.now(dt.timezone(-dt.timedelta(hours=4)))
-	
+
 	nexthour = curdt.replace(hour=curdt.hour, minute=0, second=0, microsecond=0) + dt.timedelta(hours=1, seconds=2)
-	
+
 	tts = (nexthour - curdt).seconds
 
 	with open(log_daemonlog, 'a') as f: f.write('{} {}: Sleeping for {} seconds (about {} minutes) to the next hour.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S"), tts, int(tts/60)))
