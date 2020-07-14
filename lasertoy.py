@@ -11,7 +11,6 @@
 from __future__ import division
 import time
 import random
-import resetservos
 
 log_runlog = r"/home/pi/Scripts/LaserToy/run.log"
 log_diag = r"/home/pi/Scripts/LaserToy/diagnostic.log"
