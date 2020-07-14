@@ -27,6 +27,9 @@ import Adafruit_PCA9685
 pan = 1
 tilt = 3
 
+# Laser GPIO pin
+laserPin = 23  # Broadcom pin 23 (P1 pin 16)
+
 # Initialise the PCA9685 using the default address (0x40).
 pwm = Adafruit_PCA9685.PCA9685()
 
@@ -78,6 +81,9 @@ def full_off():
     pwm.set_pwm(pan, 0, 4096);
     pwm.set_pwm(tilt, 0, 4096);
 
+def resetServos():
+    setPan(pan_reset)
+    setTilt(tilt_reset)
 
 def panTo(target):
     ## WIP: Speed controlled pan
@@ -157,16 +163,12 @@ def wait():
         # There is a 1% chance we will wait for a longer period.
         time.sleep(9)
 
-def resetServos():
-    setPan(pan_reset)
-    setTilt(tilt_reset)
-
 
 
 def runLaserRoutine(timer_mins=45, daemon=True):
 
     try:
-        # Log file
+        # Log files
         if daemon: msg = "from daemon"
         else: msg = "manually"
 
@@ -178,7 +180,6 @@ def runLaserRoutine(timer_mins=45, daemon=True):
 
         # Initialize laser GPIO
         GPIO.setmode(GPIO.BCM)
-        laserPin = 23  # Broadcom pin 23 (P1 pin 16)
         GPIO.setup(laserPin, GPIO.OUT)
         GPIO.output(laserPin, GPIO.LOW)  # Initialize LOW (off)
         f.write('{} {}: Initialized GPIO.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
@@ -200,7 +201,6 @@ def runLaserRoutine(timer_mins=45, daemon=True):
         starttime = time.time()
         # Set a time at which program will end.
         endtime = starttime + (timer_mins)*60
-
 
         GPIO.output(laserPin, GPIO.HIGH)  # Turn laser on
         f.write('{} {}: Laser GPIO switched on.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
@@ -230,11 +230,11 @@ def runLaserRoutine(timer_mins=45, daemon=True):
 
         # Make sure laser is off
         GPIO.setmode(GPIO.BCM)
-        laserPin = 23 # Broadcom pin 23 (P1 pin 16)
         GPIO.setup(laserPin, GPIO.OUT)
         GPIO.output(laserPin, GPIO.LOW)  # Initialize LO
 
         resetServos()
+        time.sleep(0.2)
         full_off()
 
         GPIO.cleanup()
@@ -251,18 +251,18 @@ def runLaserRoutine(timer_mins=45, daemon=True):
 
         # Make sure laser is off
         GPIO.setmode(GPIO.BCM)
-        laserPin = 23 # Broadcom pin 23 (P1 pin 16)
         GPIO.setup(laserPin, GPIO.OUT)
         GPIO.output(laserPin, GPIO.LOW)  # Initialize LO
 
         resetServos()
+        time.sleep(0.2)
         full_off()
 
         GPIO.cleanup()
 
         f.write('{} {}: Servos reset. Finished lasertoy.py script.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
         f.close()
-        
+
         sys.exit()
 
 
