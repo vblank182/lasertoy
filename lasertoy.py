@@ -245,4 +245,4 @@ def runLaserRoutine(timer_mins=45, daemon=True):
 
 if __name__ == "__main__":
     print('Moving servos, press Ctrl-C to quit...')
-    runLaserRoutine(daemon=False)
+    runLaserRoutine(timer_mins=1, daemon=False)
