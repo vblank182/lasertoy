@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 ## This program will run in the background and start the lasertoy.py routine at a certain time
 
 import time
