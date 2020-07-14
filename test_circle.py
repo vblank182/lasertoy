@@ -15,6 +15,8 @@ import random
 pan_reset = 380		# Default = 380
 tilt_reset = 320	# Default = 435
 
+pwm_freq = 50   # Default = 60
+
 # Set up GPIO for laser power control
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
@@ -33,7 +35,7 @@ tilt = 1
 pwm = Adafruit_PCA9685.PCA9685()
 
 # Set frequency to 60hz, good for servos.
-pwm.set_pwm_freq(60)
+pwm.set_pwm_freq(pwm_freq)
 
 def setPan(t):
 	pwm.set_pwm(pan, 0, t)

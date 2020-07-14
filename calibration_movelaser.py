@@ -51,8 +51,10 @@ tilt_max = 480  # Default = 480
 pan_cur = pan_mid
 tilt_cur = tilt_mid
 
+pwm_freq = 50   # Default = 60
+
 # Set frequency to 60hz, good for servos.
-pwm.set_pwm_freq(60)
+pwm.set_pwm_freq(pwm_freq)
 
 def setPan(t):
 	pwm.set_pwm(pan, 0, t)

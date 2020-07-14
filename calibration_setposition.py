@@ -11,7 +11,6 @@
 from __future__ import division
 import time
 import random
-import resetservos
 
 # Set up GPIO for laser power control
 import RPi.GPIO as GPIO
@@ -46,11 +45,13 @@ tilt_min = 200  # Default = 200
 tilt_mid = 340	# Default = 340
 tilt_max = 480  # Default = 480
 
+pwm_freq = 50   # Default = 60
+
 pan_cur = pan_mid
 tilt_cur = tilt_mid
 
 # Set frequency to 60hz, good for servos.
-pwm.set_pwm_freq(60)
+pwm.set_pwm_freq(pwm_freq)
 
 def setPan(t):
 	pwm.set_pwm(pan, 0, t)
