@@ -70,13 +70,13 @@ def setTilt(t):
 
 def full_on():
     # Sets both servo pins full on (100% duty cycle)
-    pwm.setPWM(pan, 4096, 0);
-    pwm.setPWM(tilt, 4096, 0);
+    pwm.set_pwm(pan, 4096, 0);
+    pwm.set_pwm(tilt, 4096, 0);
 
 def full_off():
     # Sets both servo pins full off (0% duty cycle)
-    pwm.setPWM(pan, 0, 4096);
-    pwm.setPWM(tilt, 0, 4096);
+    pwm.set_pwm(pan, 0, 4096);
+    pwm.set_pwm(tilt, 0, 4096);
 
 
 def panTo(target):
