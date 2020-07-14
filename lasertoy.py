@@ -43,10 +43,10 @@ pan_mid = 300   # Default = 340
 pan_max = 380   # Default = 450
 tilt_min = 310  # Default = 200
 tilt_mid = 380  # Default = 280
-tilt_max = 440  # Default = 325
+tilt_max = 435  # Default = 325
 
-pan_reset = 300     # Right <----> Left
-tilt_reset = 280    #    Up <----> Down
+pan_reset = 270     # Right <----> Left
+tilt_reset = 440    #    Up <----> Down
 
 pwm_freq = 50   # Default = 60
 
