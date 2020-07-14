@@ -39,11 +39,11 @@ pwm = Adafruit_PCA9685.PCA9685()
 # Configure min and max servo pulse lengths
 # Pulse length out of 4096
 pan_min = 230   # Default = 260
-pan_mid = 300   # Default = 340
-pan_max = 380   # Default = 450
-tilt_min = 310  # Default = 200
-tilt_mid = 380  # Default = 280
-tilt_max = 435  # Default = 325
+pan_mid = 280   # Default = 340
+pan_max = 320   # Default = 450
+tilt_min = 270  # Default = 200
+tilt_mid = 340  # Default = 280
+tilt_max = 350  # Default = 325
 
 pan_reset = 270     # Right <----> Left
 tilt_reset = 440    #    Up <----> Down
