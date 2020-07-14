@@ -30,8 +30,8 @@ import Adafruit_PCA9685
 #logging.basicConfig(level=logging.DEBUG)
 
 # Servo addresses
-pan = 1
-tilt = 3
+pan = 3
+tilt = 1
 
 # Initialise the PCA9685 using the default address (0x40).
 pwm = Adafruit_PCA9685.PCA9685()
@@ -58,12 +58,12 @@ def setPan(t):
 	pwm.set_pwm(pan, 0, t)
 	global pan_cur
 	pan_cur = t
-	
+
 def setTilt(t):
 	pwm.set_pwm(tilt, 0, t)
 	global tilt_cur
 	tilt_cur = t
-	
+
 GPIO.output(laserPin, GPIO.HIGH)  # Turn laser on
 
 axis = input("Move what?  [P]an [T]ilt  ")
@@ -88,7 +88,7 @@ if axis.lower() == "p":
 					for i in range(rng[1], rng[0], -10):
 						setPan(int(i))
 						time.sleep(0.1)
-				
+
 
 		else:
 			# Pick a single pan value to move to
@@ -97,7 +97,7 @@ if axis.lower() == "p":
 				setPan(int(newPan))
 
 ### Tilt ###
-else: 
+else:
 	newPan = input("Choose pan (160-600): ")
 	setPan(int(newPan))
 	while True:
@@ -116,11 +116,10 @@ else:
 					for i in range(rng[1], rng[0], -10):
 						setTilt(int(i))
 						time.sleep(0.1)
-				
+
 
 		else:
 			# Pick a single tilt value to move to
 			while True:
 				newTilt = input("Set tilt (200-480): ")
 				setTilt(int(newTilt))
-

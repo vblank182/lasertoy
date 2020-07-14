@@ -26,8 +26,8 @@ GPIO.output(laserPin, GPIO.LOW)  # Initialize LOW
 import Adafruit_PCA9685
 
 # Servo addresses
-pan = 1
-tilt = 3
+pan = 3
+tilt = 1
 
 # Initialise the PCA9685 using the default address (0x40).
 pwm = Adafruit_PCA9685.PCA9685()
@@ -39,13 +39,13 @@ def setPan(t):
 	pwm.set_pwm(pan, 0, t)
 	global pan_cur
 	pan_cur = t
-	
+
 def setTilt(t):
 	pwm.set_pwm(tilt, 0, t)
 	global tilt_cur
 	tilt_cur = t
 
-	
+
 GPIO.output(laserPin, GPIO.HIGH)  # Turn laser on
 print("Going in circles...")
 
@@ -56,10 +56,10 @@ for x in range(0, 20):
 
 	setPan(380)
 	setTilt(280)
-	time.sleep(0.1)	
-		
-	
-	
+	time.sleep(0.1)
+
+
+
 print('Resetting servos to rest position.')
 
 # Return to default (pointing down)

@@ -24,8 +24,8 @@ import RPi.GPIO as GPIO
 import Adafruit_PCA9685
 
 # Servo addresses
-pan = 1
-tilt = 3
+pan = 3
+tilt = 1
 
 # Laser GPIO pin
 laserPin = 23  # Broadcom pin 23 (P1 pin 16)
@@ -38,9 +38,9 @@ pwm = Adafruit_PCA9685.PCA9685()
 
 # Configure min and max servo pulse lengths
 # Pulse length out of 4096
-pan_min = 260   # Default = 260
-pan_mid = 340    # Default = 340
-pan_max = 450   # Default = 450
+pan_min = 220   # Default = 260
+pan_mid = 300   # Default = 340
+pan_max = 370   # Default = 450
 tilt_min = 200  # Default = 200
 tilt_mid = 280    # Default = 280
 tilt_max = 325  # Default = 325

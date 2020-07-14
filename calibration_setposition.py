@@ -28,8 +28,8 @@ import Adafruit_PCA9685
 #logging.basicConfig(level=logging.DEBUG)
 
 # Servo addresses
-pan = 1
-tilt = 3
+pan = 3
+tilt = 1
 
 # Initialise the PCA9685 using the default address (0x40).
 pwm = Adafruit_PCA9685.PCA9685()
@@ -56,12 +56,12 @@ def setPan(t):
 	pwm.set_pwm(pan, 0, t)
 	global pan_cur
 	pan_cur = t
-	
+
 def setTilt(t):
 	pwm.set_pwm(tilt, 0, t)
 	global tilt_cur
 	tilt_cur = t
-	
+
 GPIO.output(laserPin, GPIO.HIGH)  # Turn laser on
 
 while True:
@@ -76,4 +76,3 @@ while True:
 print("Quitting...")
 GPIO.output(laserPin, GPIO.LOW)  # Turn laser off
 GPIO.cleanup()
-resetservos.resetServos()
