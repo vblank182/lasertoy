@@ -173,75 +173,75 @@ def runLaserRoutine(timer_mins=45, daemon=True):
         with open(log_runlog, 'a') as f:
             f.write('Run {} on {} at {}.\n'.format(msg, time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
 
+        f = open(log_diag, 'a')
+        f.write('{} {}: Starting laser routine.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
 
-        with open(log_diag, 'a') as f:
-            f.write('{} {}: Starting laser routine.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+        # Initialize laser GPIO
+        GPIO.setmode(GPIO.BCM)
+        laserPin = 23  # Broadcom pin 23 (P1 pin 16)
+        GPIO.setup(laserPin, GPIO.OUT)
+        GPIO.output(laserPin, GPIO.LOW)  # Initialize LOW (off)
+        f.write('{} {}: Initialized GPIO.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
 
-            # Initialize laser GPIO
-            GPIO.setmode(GPIO.BCM)
-            laserPin = 23  # Broadcom pin 23 (P1 pin 16)
-            GPIO.setup(laserPin, GPIO.OUT)
-            GPIO.output(laserPin, GPIO.LOW)  # Initialize LOW (off)
-            f.write('{} {}: Initialized GPIO.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+        # Set servo PWM frequency
+        pwm.set_pwm_freq(pwm_freq)
 
-            # Set servo PWM frequency
-            pwm.set_pwm_freq(pwm_freq)
+        setPan(pan_mid)
+        f.write('{} {}: Set initial pan.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
 
-            setPan(pan_mid)
-            f.write('{} {}: Set initial pan.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+        setTilt(tilt_mid)
+        f.write('{} {}: Set initial tilt.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
 
-            setTilt(tilt_mid)
-            f.write('{} {}: Set initial tilt.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+        # Set servo variables to match initial servo positions
+        pan_cur = pan_mid
+        tilt_cur = tilt_mid
 
-            # Set servo variables to match initial servo positions
-            pan_cur = pan_mid
-            tilt_cur = tilt_mid
-
-            # Get time that program started for timer purposes.
-            starttime = time.time()
-            # Set a time at which program will end.
-            endtime = starttime + (timer_mins)*60
-
-
-            GPIO.output(laserPin, GPIO.HIGH)  # Turn laser on
-            f.write('{} {}: Laser GPIO switched on.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+        # Get time that program started for timer purposes.
+        starttime = time.time()
+        # Set a time at which program will end.
+        endtime = starttime + (timer_mins)*60
 
 
-            # Run until timer has elapsed
-            lastWait = 0
-            while (time.time() < endtime):
-                chance = random.randint(0, 100)
-
-                # Take either short or medium steps on a chance
-                if (chance < 60):
-                    shortSteps()
-                else:
-                    mediumSteps()
-
-                # When laser is within top half of tilt range, roll to wait
-                waitCooldown = 5  # seconds to wait before we can wait again
-                if (220 <= tilt_cur <= 290 and (time.time()-lastWait) > waitCooldown):
-                    wait()
-                    lastWait = time.time()  # record the last wait so we don't wait too often
+        GPIO.output(laserPin, GPIO.HIGH)  # Turn laser on
+        f.write('{} {}: Laser GPIO switched on.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
 
 
-            f.write('{} {}: Routine finished. Disabling laser and resetting servos.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
-            GPIO.output(laserPin, GPIO.LOW)  # Turn laser off
-            f.write('{} {}: Laser GPIO switched off.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+        # Run until timer has elapsed
+        lastWait = 0
+        while (time.time() < endtime):
+            chance = random.randint(0, 100)
 
-            # Make sure laser is off
-            GPIO.setmode(GPIO.BCM)
-            laserPin = 23 # Broadcom pin 23 (P1 pin 16)
-            GPIO.setup(laserPin, GPIO.OUT)
-            GPIO.output(laserPin, GPIO.LOW)  # Initialize LO
+            # Take either short or medium steps on a chance
+            if (chance < 60):
+                shortSteps()
+            else:
+                mediumSteps()
 
-            resetServos()
-            full_off()
+            # When laser is within top half of tilt range, roll to wait
+            waitCooldown = 5  # seconds to wait before we can wait again
+            if (220 <= tilt_cur <= 290 and (time.time()-lastWait) > waitCooldown):
+                wait()
+                lastWait = time.time()  # record the last wait so we don't wait too often
 
-            GPIO.cleanup()
 
-            f.write('{} {}: Servos reset. Finished lasertoy.py script.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
-            ## End of Laser Routine ##
+        f.write('{} {}: Routine finished. Disabling laser and resetting servos.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+        GPIO.output(laserPin, GPIO.LOW)  # Turn laser off
+        f.write('{} {}: Laser GPIO switched off.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+
+        # Make sure laser is off
+        GPIO.setmode(GPIO.BCM)
+        laserPin = 23 # Broadcom pin 23 (P1 pin 16)
+        GPIO.setup(laserPin, GPIO.OUT)
+        GPIO.output(laserPin, GPIO.LOW)  # Initialize LO
+
+        resetServos()
+        full_off()
+
+        GPIO.cleanup()
+
+        f.write('{} {}: Servos reset. Finished lasertoy.py script.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+        f.close()
+        ## End of Laser Routine ##
 
     # Ctrl+C handler
     except KeyboardInterrupt:
@@ -261,7 +261,8 @@ def runLaserRoutine(timer_mins=45, daemon=True):
         GPIO.cleanup()
 
         f.write('{} {}: Servos reset. Finished lasertoy.py script.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
-
+        f.close()
+        
         sys.exit()
 
 
