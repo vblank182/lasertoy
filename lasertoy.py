@@ -9,7 +9,7 @@
 
 
 from __future__ import division
-import time
+import time, sys
 import random
 
 log_runlog = r"/home/pi/Scripts/lasertoy/run.log"
@@ -42,8 +42,8 @@ tilt_min = 200  # Default = 200
 tilt_mid = 280    # Default = 280
 tilt_max = 325  # Default = 325
 
-pan_reset = 320        #
-tilt_reset = 350    # Up = -, Down = +
+pan_reset = 400     # Right <----> Left
+tilt_reset = 280    #    Up <----> Down
 
 pwm_freq = 50   # Default = 60
 
@@ -165,66 +165,87 @@ def resetServos():
 
 def runLaserRoutine(timer_mins=45, daemon=True):
 
-    # Log file
-    if daemon: msg = "from daemon"
-    else: msg = "manually"
+    try:
+        # Log file
+        if daemon: msg = "from daemon"
+        else: msg = "manually"
 
-    with open(log_runlog, 'a') as f:
-        f.write('Run {} on {} at {}.\n'.format(msg, time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
-
-
-    with open(log_diag, 'a') as f:
-        f.write('{} {}: Starting laser routine.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
-
-        # Initialize laser GPIO
-        GPIO.setmode(GPIO.BCM)
-        laserPin = 23  # Broadcom pin 23 (P1 pin 16)
-        GPIO.setup(laserPin, GPIO.OUT)
-        GPIO.output(laserPin, GPIO.LOW)  # Initialize LOW (off)
-        f.write('{} {}: Initialized GPIO.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
-
-        # Set servo PWM frequency
-        pwm.set_pwm_freq(pwm_freq)
-
-        setPan(pan_mid)
-        f.write('{} {}: Set initial pan.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
-
-        setTilt(tilt_mid)
-        f.write('{} {}: Set initial tilt.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
-
-        # Set servo variables to match initial servo positions
-        pan_cur = pan_mid
-        tilt_cur = tilt_mid
-
-        # Get time that program started for timer purposes.
-        starttime = time.time()
-        # Set a time at which program will end.
-        endtime = starttime + (timer_mins)*60
+        with open(log_runlog, 'a') as f:
+            f.write('Run {} on {} at {}.\n'.format(msg, time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
 
 
-        GPIO.output(laserPin, GPIO.HIGH)  # Turn laser on
-        f.write('{} {}: Laser GPIO switched on.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+        with open(log_diag, 'a') as f:
+            f.write('{} {}: Starting laser routine.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+
+            # Initialize laser GPIO
+            GPIO.setmode(GPIO.BCM)
+            laserPin = 23  # Broadcom pin 23 (P1 pin 16)
+            GPIO.setup(laserPin, GPIO.OUT)
+            GPIO.output(laserPin, GPIO.LOW)  # Initialize LOW (off)
+            f.write('{} {}: Initialized GPIO.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+
+            # Set servo PWM frequency
+            pwm.set_pwm_freq(pwm_freq)
+
+            setPan(pan_mid)
+            f.write('{} {}: Set initial pan.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+
+            setTilt(tilt_mid)
+            f.write('{} {}: Set initial tilt.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+
+            # Set servo variables to match initial servo positions
+            pan_cur = pan_mid
+            tilt_cur = tilt_mid
+
+            # Get time that program started for timer purposes.
+            starttime = time.time()
+            # Set a time at which program will end.
+            endtime = starttime + (timer_mins)*60
 
 
-        # Run until timer has elapsed
-        lastWait = 0
-        while (time.time() < endtime):
-            chance = random.randint(0, 100)
-
-            # Take either short or medium steps on a chance
-            if (chance < 60):
-                shortSteps()
-            else:
-                mediumSteps()
-
-            # When laser is within top half of tilt range, roll to wait
-            waitCooldown = 5  # seconds to wait before we can wait again
-            if (220 <= tilt_cur <= 290 and (time.time()-lastWait) > waitCooldown):
-                wait()
-                lastWait = time.time()  # record the last wait so we don't wait too often
+            GPIO.output(laserPin, GPIO.HIGH)  # Turn laser on
+            f.write('{} {}: Laser GPIO switched on.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
 
 
-        f.write('{} {}: Routine finished. Disabling laser and resetting servos.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+            # Run until timer has elapsed
+            lastWait = 0
+            while (time.time() < endtime):
+                chance = random.randint(0, 100)
+
+                # Take either short or medium steps on a chance
+                if (chance < 60):
+                    shortSteps()
+                else:
+                    mediumSteps()
+
+                # When laser is within top half of tilt range, roll to wait
+                waitCooldown = 5  # seconds to wait before we can wait again
+                if (220 <= tilt_cur <= 290 and (time.time()-lastWait) > waitCooldown):
+                    wait()
+                    lastWait = time.time()  # record the last wait so we don't wait too often
+
+
+            f.write('{} {}: Routine finished. Disabling laser and resetting servos.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+            GPIO.output(laserPin, GPIO.LOW)  # Turn laser off
+            f.write('{} {}: Laser GPIO switched off.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+
+            # Make sure laser is off
+            GPIO.setmode(GPIO.BCM)
+            laserPin = 23 # Broadcom pin 23 (P1 pin 16)
+            GPIO.setup(laserPin, GPIO.OUT)
+            GPIO.output(laserPin, GPIO.LOW)  # Initialize LO
+
+            resetServos()
+            full_off()
+
+            GPIO.cleanup()
+
+            f.write('{} {}: Servos reset. Finished lasertoy.py script.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
+            ## End of Laser Routine ##
+
+    # Ctrl+C handler
+    except KeyboardInterrupt:
+        f.write('{} {}: Routine interupted (Ctrl+C). Disabling laser and resetting servos.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
         GPIO.output(laserPin, GPIO.LOW)  # Turn laser off
         f.write('{} {}: Laser GPIO switched off.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
 
@@ -240,9 +261,11 @@ def runLaserRoutine(timer_mins=45, daemon=True):
         GPIO.cleanup()
 
         f.write('{} {}: Servos reset. Finished lasertoy.py script.\n'.format(time.strftime("%m/%d/%Y"), time.strftime("%H:%M:%S")))
-    ## End of laser routine
+
+        sys.exit()
+
 
 
 if __name__ == "__main__":
     print('Moving servos, press Ctrl-C to quit...')
-    runLaserRoutine(timer_mins=1, daemon=False)
+    runLaserRoutine(timer_mins=30, daemon=False)
