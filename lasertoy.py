@@ -45,6 +45,9 @@ tilt_min = 270  # Default = 200
 tilt_mid = 340  # Default = 280
 tilt_max = 350  # Default = 325
 
+pan_cur = 0
+tilt_cur = 0
+
 pan_reset = 270     # Right <----> Left
 tilt_reset = 440    #    Up <----> Down
 
@@ -62,13 +65,15 @@ def set_servo_pulse(channel, pulse):
     pwm.set_pwm(channel, 0, pulse)
 
 def setPan(t):
-    pwm.set_pwm(pan, 0, t)
     global pan_cur
+
+    pwm.set_pwm(pan, 0, t)
     pan_cur = t
 
 def setTilt(t):
-    pwm.set_pwm(tilt, 0, t)
     global tilt_cur
+
+    pwm.set_pwm(tilt, 0, t)
     tilt_cur = t
 
 def full_on():
@@ -102,6 +107,8 @@ def panTo(target):
 ############################
 
 def mediumSteps():
+    global pan_cur
+    global tilt_cur
     pan_step = 25
     tilt_step = 15
 
@@ -127,6 +134,8 @@ def mediumSteps():
     time.sleep(random.randint(15, 41)/100)  # Sleep for a random time from 0.15 seconds to 0.4 seconds.
 
 def shortSteps():
+    global pan_cur
+    global tilt_cur
     pan_step = 5
     tilt_step = 5
 
@@ -166,7 +175,9 @@ def wait():
 
 
 def runLaserRoutine(timer_mins=45, daemon=True):
-
+    global pan_cur
+    global tilt_cur
+    
     try:
         # Log files
         if daemon: msg = "from daemon"
